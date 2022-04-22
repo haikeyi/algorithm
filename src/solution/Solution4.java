@@ -27,7 +27,7 @@ public class Solution4 {
 
         int right = 0,left = 0;
         int valid = 0;
-        //记录最小覆盖字串的起始索引和长度
+        //记录最小覆盖子串的起始索引和长度
         int start = 0, len = Integer.MAX_VALUE;
         while (right < s.length()){
             //即将移入窗口的字符
@@ -71,8 +71,47 @@ public class Solution4 {
      * @param s2
      * @return
      */
-    public boolean checkInclusion(String s1, String s2) {
-
+    public static boolean checkInclusion(String s1, String s2) {
+        Map<Character,Integer> window = new HashMap<>();
+        Map<Character,Integer> need = new HashMap<>();
+        for (int i = 0; i < s1.length(); i++) {
+            char key = s1.charAt(i);
+            need.put(key,need.getOrDefault(key,0) + 1);
+        }
+        int left = 0;
+        int right = 0;
+        int valid = 0;
+        while (right < s2.length()){
+            //即将移入窗口的字符
+            char c = s2.charAt(right);
+            right++;
+            //窗口内一系列数据的更新
+            if(need.containsKey(c)){
+                window.put(c, window.getOrDefault(c,0) + 1);
+                if(window.get(c).equals(need.get(c))){
+                    valid++;
+                }
+            }
+            //判断左侧窗口是否要收缩
+            while (right - left >= s1.length()){
+                if(valid == need.size()){
+                    return true;
+                }
+                char d = s2.charAt(left);
+                left++;
+                // 进行窗口内数据的一系列更新
+                if(need.containsKey(d)){
+                    if(window.get(d).equals(need.get(d))){
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
         return false;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(checkInclusion("ab","eidboaoo"));
     }
 }
