@@ -1,7 +1,6 @@
 package solution;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 滑动窗口题目
@@ -111,7 +110,53 @@ public class Solution4 {
         return false;
     }
 
+    /**
+     * 438. 找到字符串中所有字母异位词
+     * @param s
+     * @param p
+     * @return
+     */
+    public static List<Integer> findAnagrams(String s, String p) {
+        Map<Character,Integer> window = new HashMap<>();
+        Map<Character,Integer> need = new HashMap<>();
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < p.length(); i++) {
+            char key = p.charAt(i);
+            need.put(key,need.getOrDefault(key,0) + 1);
+        }
+        int right = 0;
+        int left = 0;
+        int valid = 0;
+        while (right < s.length()){
+            char c = s.charAt(right);
+            //窗口右移
+            right++;
+            //更新窗口数据
+            if(need.containsKey(c)){
+                window.put(c, window.getOrDefault(c,0) + 1);
+                if(need.get(c).equals(window.get(c))){
+                    valid++;
+                }
+            }
+            // 判断左侧窗口是否要收缩
+            while (right - left >= p.length()){
+                if(valid == need.size()){
+                    result.add(left);
+                }
+                char d = s.charAt(left);
+                left++;
+                //进行窗口内一系列数据的更新
+                if(need.containsKey(d)){
+                    if(need.get(d).equals(window.get(d))){
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+        return result;
+    }
     public static void main(String[] args) {
-        System.out.println(checkInclusion("ab","eidboaoo"));
+        System.out.println(findAnagrams("cbaebabacd","abc"));
     }
 }
